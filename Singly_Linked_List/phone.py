@@ -1,8 +1,8 @@
 class Phone:
-    def __init__(self, phone_type="mobile", phone=""):
+    def __init__(self, phone_type="Mobile", phone=""):
         self.type = phone_type
         self.phone = phone
-        self.phones = {"mobile": [], "home": [], "work": []}
+        self.phones = {"Mobile": [], "Home": [], "Work": []}
         self.phone_index = 0
 
     def get_phone(self, phone_type):
@@ -10,12 +10,12 @@ class Phone:
 
     def get_all_phones(self):
         all_phones = []
-        for phone_type in self.phones:
-            for phone in phone_type:
-                all_phones.append("{}: {}".format(phone_type, phone))
-        return "".join(all_phones)
+        for phone_type, phone_list in self.phones.items():
+            for phone in phone_list:
+                all_phones.append("{} Phone: {}".format(phone_type, phone))
+        return "\n".join(all_phones)
 
-    def add_phone(self, phone, phone_type):
+    def add_phone(self, phone, phone_type="Mobile"):
         self.phones[phone_type].append(phone)
 
     def has_only_one_phone(self, phone_list):
@@ -34,9 +34,9 @@ class Phone:
         self.phone_index = user_index
         return True
 
-    def modify_phone(self, phone, phone_type):
+    def modify_phone(self, phone, phone_type="Mobile"):
         if self.has_only_one_phone(self.phones[phone_type]):
-            self.phones[phone_type] = phone
+            self.phones[phone_type][0] = phone
         else:
             if self.is_valid_user_input(self.phones[phone_type]):
                 self.phones[phone_type][self.phone_index] = phone

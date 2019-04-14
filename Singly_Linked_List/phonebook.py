@@ -9,17 +9,20 @@ class PhoneBook:
     def get_size(self):
         return self.size
 
-    def create_fullname(self, name, surname):
+    @staticmethod
+    def create_fullname(name, surname):
         if surname == "":
-            fullname = name
+            fullname = str(name)
         else:
             fullname = "{} {}".format(name, surname)
         return fullname
 
     # add new node at the beginning of the sequence
     def add_contact(self, name, surname=""):
-        if not self.contact_already_exists(self.create_fullname(name, surname)):
-            return "Contact already exists. Choose a different name"
+        print ("fullname" + self.create_fullname(name, surname))
+        if self.contact_already_exists(self.create_fullname(name, surname)):
+            print("Contact already exists. Choose a different name")
+            return False
         new_contact = Contact(str(name), str(surname), self.root)
         self.root = new_contact
         self.size += 1
@@ -27,10 +30,7 @@ class PhoneBook:
     def remove_contact(self, name, surname=""):
         this_node = self.root
         previous_node = None
-        if surname != "":
-            fullname = "{} {}".format(name, surname)
-        else:
-            fullname = str(name)
+        fullname = self.create_fullname(name, surname)
         while this_node:
             if this_node.get_name_and_surname() == fullname:
                 if previous_node:
@@ -42,79 +42,17 @@ class PhoneBook:
             else:
                 previous_node = this_node
                 this_node = this_node.get_next()
-        return False  # data not found
-
-    def add_contact_address(self, fullname, address):
-        this_node = self.root
-        fullname = str(fullname)
-        while this_node:
-            if this_node.get_name_and_surname() == fullname:
-                this_node.add_address(str(address))
-                return True
-            else:
-                this_node = this_node.get_next()
-        return False  # data not found
-
-    def add_contact_phone(self, fullname, phone_number):
-        this_node = self.root
-        fullname = str(fullname)
-        while this_node:
-            if this_node.get_name_and_surname() == fullname:
-                this_node.add_phone(str(phone_number))
-                return True
-            else:
-                this_node = this_node.get_next()
-        return False  # data not found
-
-    def add_contact_email(self, fullname, email):
-        this_node = self.root
-        fullname = str(fullname)
-        while this_node:
-            if this_node.get_name_and_surname() == fullname:
-                this_node.add_email_address(str(email))
-                return True
-            else:
-                this_node = this_node.get_next()
-        return False  # data not found
-
-    def edit_contact_phone(self, fullname, new_phone, index=0):
-        this_node = self.root
-        fullname = str(fullname)
-        while this_node:
-            if this_node.get_name_and_surname() == fullname:
-                return True if this_node.edit_phone(index, new_phone) else False
-            else:
-                this_node = this_node.get_next()
-        return False  # data not found
-
-    def edit_contact_address(self, fullname, new_address, index=0):
-        this_node = self.root
-        fullname = str(fullname)
-        while this_node:
-            if this_node.get_name_and_surname() == fullname:
-                return True if this_node.edit_address(index, new_address) else False
-            else:
-                this_node = this_node.get_next()
-        return False  # data not found
-
-    def edit_contact_email(self, fullname, new_email, index=0):
-        this_node = self.root
-        fullname = str(fullname)
-        while this_node:
-            if this_node.get_name_and_surname() == fullname:
-                return True if this_node.edit_email(index, new_email) else False
-            else:
-                this_node = this_node.get_next()
+        print ("trying to delete {}. data not found".format(fullname))
         return False  # data not found
 
     def contact_already_exists(self, fullname):
         this_node = self.root
         while this_node:
-            if str(fullname) in this_node.get_name_and_surname():
-                return False
+            if str(fullname) == this_node.get_name_and_surname():
+                return True
             else:
                 this_node = this_node.get_next()
-        return True
+        return False
 
     def edit_name(self, name, new_name, surname=""):
         fullname = self.create_fullname(name, surname)
@@ -141,11 +79,11 @@ class PhoneBook:
         return False  # data not found
 
     # finds all contacts containing a string
-    def find_contact(self, *argv):
+    def find_contacts(self, name="", surname=""):
         this_node = self.root
         returned_contacts = []
         while this_node:
-            search_name = " ".join(argv)
+            search_name = self.create_fullname(name, surname)
             if search_name in this_node.get_name_and_surname():
                 returned_contacts.append(this_node.get_name_and_surname())
                 this_node = this_node.get_next()
@@ -168,18 +106,18 @@ class PhoneBook:
         out_index = int(user_input) -1
         return out_index
 
-    def find_contact_info(self, name, surname=""):
+    # returns one contact based on user inputting contact index
+    def find_contact(self, name, surname=""):
         fullname = self.create_fullname(name, surname)
-        search_result = self.find_contact(fullname)
-        if self.find_contact(fullname) and len(search_result) != 1:
+        search_result = self.find_contacts(fullname)
+        if self.find_contacts(fullname) and len(search_result) != 1:
             contact_to_modify = search_result[self.valid_user_input(search_result)]
         else:
             contact_to_modify = search_result[0]
         this_node = self.root
         while this_node:
             if this_node.get_name_and_surname() == contact_to_modify:
-                contact_details = "{}".format(this_node.get_all_contact_details)
-                return contact_details
+                return this_node
             else:
                 this_node = this_node.get_next()
         return False
