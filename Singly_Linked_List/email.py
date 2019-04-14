@@ -1,12 +1,9 @@
-class Phone:
-    def __init__(self, phone_type="mobile", phone=""):
-        self.type = phone_type
-        self.phone = phone
-        self.phones = {"mobile": [], "home": [], "work": []}
-        self.phone_index = 0
+class Email:
+    def __init__(self, email=""):
+        self.email_addresses = []
 
-    def get_phone(self, phone_type):
-        return self.phones[phone_type]
+    def get_emails(self):
+        return "\n".join(self.email_addresses)
 
     def get_all_phones(self):
         all_phones = []
