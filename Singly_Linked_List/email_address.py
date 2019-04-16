@@ -9,6 +9,9 @@ class Email:
         else:
             return ""
 
+    def get_email(self, index=0):
+        return self.email_addresses[index]
+
     def add_email(self, email):
         self.email_addresses.append(email)
 

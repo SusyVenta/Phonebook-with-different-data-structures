@@ -12,8 +12,8 @@ class Phone:
         all_phones = []
         for phone_type, phone_list in self.phones.items():
             for phone in phone_list:
-                all_phones.append("{} Phone: {}".format(phone_type, phone))
-        return "\n".join(all_phones)
+                all_phones.append("{} Phone: {}\n".format(phone_type, phone))
+        return "".join(all_phones)
 
     def add_phone(self, phone, phone_type="Mobile"):
         self.phones[phone_type].append(phone)

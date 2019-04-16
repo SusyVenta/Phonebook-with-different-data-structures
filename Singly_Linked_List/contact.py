@@ -1,6 +1,6 @@
-from phone import Phone
-from address import Address
-from email_address import Email
+from .phone import Phone
+from .address import Address
+from .email_address import Email
 
 
 class Contact:
@@ -19,7 +19,7 @@ class Contact:
         self.next_node = n
 
     def get_all_contact_details(self):
-        contact_info = '"Contact details of {} {}: \n"'.format(self.first_name, self.surname)
+        contact_info = 'Contact details of {} {}: \n'.format(self.first_name, self.surname)
         contact_info += self.phone.get_all_phones() + "\n" + self.address.get_all_addresses() + "\n" + \
                         self.email_address.get_emails()
         return contact_info
