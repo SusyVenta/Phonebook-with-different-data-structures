@@ -1,4 +1,4 @@
-from contact import Contact
+from .contact import Contact
 
 
 class PhoneBook:
@@ -62,6 +62,7 @@ class PhoneBook:
         while this_node:
             if this_node.get_name_and_surname() == fullname:
                 this_node.edit_name(new_name)
+                return True
             else:
                 this_node = this_node.get_next()
         return False  # data not found
@@ -74,6 +75,7 @@ class PhoneBook:
         while this_node:
             if this_node.get_name_and_surname() == fullname:
                 this_node.edit_surname(new_surname)
+                return True
             else:
                 this_node = this_node.get_next()
         return False  # data not found
@@ -93,38 +95,12 @@ class PhoneBook:
             return returned_contacts
         return False
 
-    def get_input_prompt(self, search_result):
-        user_input = input("More than one contact corresponding:\n {}\nPlease type 1 to choose the first, "
-                     "2 for the second...".format(" ,".join(search_result)))
-        return user_input
-
-    def valid_user_input(self, search_result):
-        user_input = self.get_input_prompt(search_result)
-        while not (int(user_input) <= len(search_result)):
-            print("The number you chose is not correct. Please choose again")
-            self.valid_user_input(search_result)
-        out_index = int(user_input) -1
-        return out_index
-
-    # returns one contact based on user inputting contact index
-    def find_contact(self, name, surname=""):
-        fullname = self.create_fullname(name, surname)
-        search_result = self.find_contacts(fullname)
-        if self.find_contacts(fullname) and len(search_result) != 1:
-            contact_to_modify = search_result[self.valid_user_input(search_result)]
-        else:
-            contact_to_modify = search_result[0]
-        this_node = self.root
-        while this_node:
-            if this_node.get_name_and_surname() == contact_to_modify:
-                return this_node
-            else:
-                this_node = this_node.get_next()
-        return False
-
     def print_all_contact_details(self):
         this_node = self.root
+        return_string = ""
         while this_node:
-            print(this_node.get_all_contact_details())
+            return_string += this_node.get_all_contact_details()
             this_node = this_node.get_next()
+        print(return_string)
+        return return_string
 
