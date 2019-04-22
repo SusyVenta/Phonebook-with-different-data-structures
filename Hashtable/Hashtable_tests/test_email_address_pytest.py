@@ -14,7 +14,7 @@ def test_add_email():
     email_object = Email()
     assert "" == email_object.get_emails()
     email_object.add_email("aa@amail.com")
-    assert "aa@amail.com" == email_object.get_emails()
+    assert "E-mail addresses:\naa@amail.com" == email_object.get_emails()
 
 
 def test_modify_email():

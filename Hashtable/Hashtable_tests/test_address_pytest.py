@@ -14,10 +14,9 @@ def test_get_address():
 
 def test_get_all_addresses():
     address_object = Address()
-    address_object.addresses = {"Home": ["7 rue JS, Luxembourg"], "Work": ["via Resegone, Carnate"], "Other":
+    address_object.addresses = {"Home": [], "Work": [], "Other":
         ["10, rue de la Gare, Luxembourg", "8, av. Liberté, Luxembourg"]}
-    assert "Home Address: 7 rue JS, Luxembourg\nWork Address: via Resegone, Carnate\nOther Address: 10, rue de la " \
-           "Gare, Luxembourg\nOther Address: 8, av. Liberté, Luxembourg\n" == address_object.get_all_addresses()
+    assert "Other Address: 10, rue de la Gare, Luxembourg\nOther Address: 8, av. Liberté, Luxembourg\n" == address_object.get_all_addresses()
     address_object.addresses = {"Home": [], "Work": [], "Other": []}
     assert "" == address_object.get_all_addresses()
 

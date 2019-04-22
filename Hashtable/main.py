@@ -1,0 +1,28 @@
+from phonebook import PhoneBook
+
+
+new_linkedList = PhoneBook()
+new_linkedList.add_contact("Susanna Ventafridda")
+print(new_linkedList.print_all_contact_details())
+new_linkedList.add_contact("Susanna", "Ventafridda")
+new_linkedList.add_contact(12)
+print("size="+str(new_linkedList.get_size()))
+new_linkedList.remove_contact(8)
+print("size="+str(new_linkedList.get_size()))
+print(new_linkedList.remove_contact(12))
+print("size="+str(new_linkedList.get_size()))
+new_linkedList.add_contact("susanna", "ventafridda")
+new_linkedList.add_contact("paolo")
+print("size="+str(new_linkedList.get_size()))
+print(new_linkedList.find_contact("susanna"))
+print("printing values:")
+print(new_linkedList.print_all_contact_details())
+print("size="+str(new_linkedList.get_size()))
+###
+print(new_linkedList.find_contact("susanna ventafridda").phone.add_phone("33333 3333"))
+print(new_linkedList.find_contact("susanna", "ventafridda").address.add_address("rue js, 7, lux"))
+print(new_linkedList.find_contact("susanna", "ventafridda").email_address.add_email("aaa@amazon.lu"))
+print(new_linkedList.print_all_contact_details())
+print(new_linkedList.find_contact("susanna", "ventafridda").phone.modify_phone("555 555 555"))
+print(new_linkedList.print_all_contact_details())
+print(new_linkedList.edit_surname("susanna ventafridda", "venta"))
