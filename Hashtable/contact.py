@@ -10,30 +10,25 @@ class Contact:
         self.phone = Phone()
         self.address = Address()
         self.email_address = Email()
-        self.contact = {"name and surname": [name, surname], "phone": self.phone, "address": self.address, "emails": self.email_address}
 
     def get_all_contact_details(self):
-        name = self.contact["name and surname"][0]
-        surname = self.contact["name and surname"][1]
-        contact_info = ['{} {}'.format(name, surname), self.phone.get_all_phones(), self.address.get_all_addresses(),
-                        self.email_address.get_emails()]
+        contact_info = '{} {}:\n{}\n{}\n{}\n'.format(self.first_name, self.surname, self.phone.get_all_phones(),
+                                                     self.address.get_all_addresses(), self.email_address.get_emails())
         return contact_info
 
     def get_name(self):
-        return self.contact["name and surname"][0]
+        return self.first_name
 
     def get_surname(self):
-        return self.contact["name and surname"][1]
+        return self.surname
 
     def get_name_and_surname(self):
-        name = self.contact["name and surname"][0]
-        surname = self.contact["name and surname"][1]
-        if self.contact["name and surname"][1] != "":
-            return "{} {}".format(name, surname)
-        return name
+        if self.surname != "":
+            return "{} {}".format(self.first_name, self.surname)
+        return self.first_name
 
     def set_surname(self, surname):
-        self.contact["name and surname"][1] = surname
+        self.surname = surname
 
     def set_name(self, new_name):
-        self.contact["name and surname"][0] = new_name
+        self.first_name = new_name

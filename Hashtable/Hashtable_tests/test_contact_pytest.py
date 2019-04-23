@@ -3,10 +3,10 @@ from ..contact import Contact
 
 def test_get_all_contact_details():
     contact_object = Contact("Susanna")
-    expected_contacts = ["Susanna ", "", "", ""]
+    expected_contacts = 'Susanna :\n\n\n\n'
     assert expected_contacts == contact_object.get_all_contact_details()
     contact_object.phone.add_phone("333 333")
-    expected_contacts = ["Susanna ", "Mobile Phone: 333 333\n", "", ""]
+    expected_contacts = "Susanna :\nMobile Phone: 333 333\n\n\n\n"
     assert expected_contacts == contact_object.get_all_contact_details()
 
 

@@ -28,7 +28,7 @@ class PhoneBook:
 
     def remove_contact(self, name, surname=""):
         for key, value in self.phonebook.items():
-            if value["name and surname"] == [name, surname]:
+            if "{} {}".format(value.first_name, value.surname) == "{} {}".format(name, surname):
                 del self.phonebook[key]
                 self.contact_index -= 1
                 return True
@@ -37,7 +37,7 @@ class PhoneBook:
 
     def contact_already_exists(self, name, surname=""):
         for key, value in self.phonebook.items():
-            if (value.contact["name and surname"][0] == name) and (value.contact["name and surname"][1] == surname):
+            if (value.first_name == name) and (value.surname == surname):
                 return True
         return False
 
@@ -45,8 +45,8 @@ class PhoneBook:
         if self.contact_already_exists(new_name, surname):
             return "Contact already exists. Choose a different name"
         for key, value in self.phonebook.items():
-            if value["Name and surname"] == [name, surname]:
-                value["Name and surname"][0] = new_name
+            if "{} {}".format(value.first_name, value.surname) == "{} {}".format(name, surname):
+                value.first_name = new_name
                 return True
         return False  # data not found
 
@@ -54,26 +54,21 @@ class PhoneBook:
         if self.contact_already_exists(name, new_surname):
             return "Contact already exists. Choose a different name"
         for key, value in self.phonebook.items():
-            if value["Name and surname"] == [name, surname]:
-                value["Name and surname"][1] = new_surname
+            if "{} {}".format(value.first_name, value.surname) == "{} {}".format(name, surname):
+                value.surname = new_surname
                 return True
         return False  # data not found
 
-    # finds all contacts containing a string
     def find_contacts(self, name, surname=""):
-        returned_contacts = []
         search_name = "{} {}".format(name, surname)
         for key, value in self.phonebook.items():
-            if "{} {}".format(value["Name and surname"][0], value["Name and surname"][1]) == search_name:
-                returned_contacts.append(key)
-        if returned_contacts:
-            return returned_contacts
+            if "{} {}".format(value.first_name, value.surname) == search_name:
+                return value
         return False
 
     def print_all_contact_details(self):
         return_string = ""
         for key, value in self.phonebook.items():
-            return_string += " ".join(value.get_all_contact_details())
-        print(return_string)
+            return_string += "".join(value.get_all_contact_details())
         return return_string
 

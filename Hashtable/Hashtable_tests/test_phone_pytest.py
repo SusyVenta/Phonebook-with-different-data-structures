@@ -10,8 +10,8 @@ def test_get_phone():
 
 def test_get_all_phones():
     phone_object = Phone()
-    phone_object.phones = {"Mobile": ["+00 000 000"], "Home": ["+11 111", "+22 222 222"], "Work": []}
-    expected_phones = "Mobile Phone: +00 000 000\nHome Phone: +11 111\nHome Phone: +22 222 222\n"
+    phone_object.phones = {"Mobile": [], "Home": ["+11 111", "+22 222 222"], "Work": []}
+    expected_phones = "Home Phone: +11 111\nHome Phone: +22 222 222\n"
     assert expected_phones == phone_object.get_all_phones()
 
 
