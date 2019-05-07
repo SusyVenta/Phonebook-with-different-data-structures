@@ -26,13 +26,17 @@ class PhoneBook:
             self.current_size += self.current_size
 
     def hash_function(self, key):
-        # remainder method
-        unicode = 0
-        position_index = 1
-        for char in key:
-            unicode += (ord(char) * position_index)
-            position_index += 1
-        return unicode % self.current_size
+        # try:
+        #     # remainder method
+        #     unicode = 0
+        #     position_index = 1
+        #     for char in key:
+        #         unicode += (ord(char) * position_index)
+        #         position_index += 1
+        #     return unicode % self.current_size
+        # except:
+        object_hash = hash(key) % self.current_size
+        return object_hash
 
     def is_collision(self, hash_value, key):
         return self.phone_book_buckets[hash_value] != None and self.phone_book_buckets[hash_value] != key
@@ -40,11 +44,11 @@ class PhoneBook:
     def is_bucket_empty(self, hash_value):
         return self.phone_book_buckets[hash_value] == None
 
-    def write_key_and_data(self, hash_value, key, data):
+    def write_key_and_data(self, hash_value, key, data=None):
         self.phone_book_buckets[hash_value] = key
         self.phone_book_data[hash_value] = data
 
-    def if_empty_bucket_write_key_and_data(self, hash_value, key, data):
+    def if_empty_bucket_write_key_and_data(self, hash_value, key, data=None):
         # if bucket is empty --> fill with new key
         # put data at same index in second array
         if self.is_bucket_empty(hash_value):
@@ -52,25 +56,33 @@ class PhoneBook:
             return True
         return False
 
-    def replace_data_if_key_is_the_same(self, hash_value, key, data):
+    def replace_data_if_key_is_the_same(self, hash_value, key, data=None):
         if self.phone_book_buckets[hash_value] == key:
             self.phone_book_data[hash_value] = data
             return True
         return False
 
+    def find_key(self, hash_value, key):
+        if self.phone_book_buckets[hash_value] == key:
+            return True
+        return False
+
     def rehash_until_no_collision_found(self, hash_value, key, skip_value=1):
         next_slot = self.rehash(hash_value, skip_value)
-        if self.is_collision(next_slot, key):
-            skip_value += 2
-            self.rehash_until_no_collision_found(next_slot, key, skip_value)
-        return next_slot
+        # condition added to avoid infinite rehashing when looking for a key
+        if next_slot <= self.current_size - 1:
+            if self.is_collision(next_slot, key):
+                skip_value += 2
+                self.rehash_until_no_collision_found(next_slot, key, skip_value)
+            return next_slot
+        return False
 
     def rehash(self, old_hash, skip_value=1):
         # quadratic probing: uses a skip consisting of successive perfect squares
         new_hash = (old_hash + skip_value) % self.current_size
         return new_hash
 
-    def add_contact(self, key, data):
+    def insert(self, key, data=None):
         hash_value = self.hash_function(key)
         if not self.if_empty_bucket_write_key_and_data(hash_value, key, data):
             if not self.replace_data_if_key_is_the_same(hash_value, key, data):
@@ -91,23 +103,39 @@ class PhoneBook:
             print("Contact already exists. Choose a different name")
             return False
         new_contact = Contact(name, surname)
-        self.phonebook[self.contact_index] = new_contact
-        self.contact_index += 1
+        self.insert(new_contact)
+        self.number_of_contacts += 1
         return True
 
     def remove_contact(self, name, surname=""):
-        for key, value in self.phonebook.items():
-            if "{} {}".format(value.first_name, value.surname) == "{} {}".format(name, surname):
-                del self.phonebook[key]
-                self.contact_index -= 1
-                return True
-        print("trying to delete {} {}. data not found".format(name, surname))
-        return False
+        fullname = self.create_fullname(name, surname)
+        hash_value = self.hash_function(fullname)
+        if not self.find_key(hash_value, fullname):
+            key_hash = self.rehash_until_no_collision_found(hash_value, fullname)
+            if key_hash != False:
+                self.phone_book_buckets[key_hash] == None
+                self.number_of_contacts -= 1
+            else:
+                print("trying to delete {} {}. data not found".format(name, surname))
+                return False
+        return True
 
     def contact_already_exists(self, name, surname=""):
-        for key, value in self.phonebook.items():
-            if (value.first_name == name) and (value.surname == surname):
-                return True
+        fullname = self.create_fullname(name, surname)
+        hash_value = self.hash_function(fullname)
+        if not self.find_key(hash_value, fullname):
+            hash_value = self.rehash_until_no_collision_found(hash_value, fullname)
+        if self.phone_book_buckets[hash_value] == fullname:
+            return True
+        return False
+####
+    def find_contact(self, name, surname=""):
+        fullname = self.create_fullname(name, surname)
+        hash_value = self.hash_function(fullname)
+        if not self.find_key(hash_value, fullname):
+            hash_value = self.rehash_until_no_collision_found(hash_value, fullname)
+        if self.phone_book_buckets[hash_value] == fullname:
+            return True
         return False
 
     def edit_name(self, name, new_name, surname=""):
