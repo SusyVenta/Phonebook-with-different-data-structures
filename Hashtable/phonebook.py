@@ -8,7 +8,9 @@ class PhoneBook:
         # initial capacity set to 16 as in Java HashMap
         self.initial_size = 16
         self.current_size = 16
+        # self.phone_book_buckets contains the keys
         self.phone_book_buckets = [None]*self.initial_size
+        # self.phone_book_data contains the keys
         self.phone_book_data = [None]*self.initial_size
         # load factor set to 2/3 of the storing capacity as in Java and Python
         self.load_factor = 0.75
@@ -32,38 +34,49 @@ class PhoneBook:
             position_index += 1
         return unicode % self.current_size
 
-    def is_collision(self, hash_value):
-        pass
+    def is_collision(self, hash_value, key):
+        return self.phone_book_buckets[hash_value] != None and self.phone_book_buckets[hash_value] != key
 
-    def rehash(self, old_hash, skip_value=1):
-        new_hash = old_hash + skip_value
-        if self.is_collision(new_hash):
-            skip_value += 2
-            self.rehash(new_hash, skip_value)
-        return new_hash % self.current_size
+    def is_bucket_empty(self, hash_value):
+        return self.phone_book_buckets[hash_value] == None
 
-    def insert(self, key, data):
-        hash_value = self.hash_function(key)
+    def write_key_and_data(self, hash_value, key, data):
+        self.phone_book_buckets[hash_value] = key
+        self.phone_book_data[hash_value] = data
+
+    def if_empty_bucket_write_key_and_data(self, hash_value, key, data):
         # if bucket is empty --> fill with new key
         # put data at same index in second array
-        if self.phone_book_buckets[hash_value] == None:
-            self.phone_book_buckets[hash_value] = key
+        if self.is_bucket_empty(hash_value):
+            self.write_key_and_data(hash_value, key, data)
+            return True
+        return False
+
+    def replace_data_if_key_is_the_same(self, hash_value, key, data):
+        if self.phone_book_buckets[hash_value] == key:
             self.phone_book_data[hash_value] = data
-        else:
-            if self.phone_book_buckets[hash_value] == key:
-                self.phone_book_data[hash_value] = data  # replace data if key is the same
-            else:
-                next_slot = self.rehash(hash_value)
-                while self.phone_book_buckets[next_slot] != None and \
-                        self.phone_book_buckets[next_slot] != key:
-                    next_slot = self.rehash(next_slot)
+            return True
+        return False
 
-                if self.phone_book_buckets[next_slot] == None:
-                    self.phone_book_buckets[next_slot] = key
-                    self.phone_book_data[next_slot] = data
-                else:
-                    self.phone_book_data[next_slot] = data  # replace
+    def rehash_until_no_collision_found(self, hash_value, key, skip_value=1):
+        next_slot = self.rehash(hash_value, skip_value)
+        if self.is_collision(next_slot, key):
+            skip_value += 2
+            self.rehash_until_no_collision_found(next_slot, key, skip_value)
+        return next_slot
 
+    def rehash(self, old_hash, skip_value=1):
+        # quadratic probing: uses a skip consisting of successive perfect squares
+        new_hash = (old_hash + skip_value) % self.current_size
+        return new_hash
+
+    def add_contact(self, key, data):
+        hash_value = self.hash_function(key)
+        if not self.if_empty_bucket_write_key_and_data(hash_value, key, data):
+            if not self.replace_data_if_key_is_the_same(hash_value, key, data):
+                free_slot = self.rehash_until_no_collision_found(hash_value, key)
+                if not self.if_empty_bucket_write_key_and_data(free_slot, key, data):
+                    self.replace_data_if_key_is_the_same(free_slot, key, data)
 
     @staticmethod
     def create_fullname(name, surname):
