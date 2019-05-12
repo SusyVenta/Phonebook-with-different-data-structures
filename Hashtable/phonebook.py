@@ -77,6 +77,15 @@ class PhoneBook:
             return next_slot
         return False
 
+    def rehash_until_key_found(self, hash_value, key, skip_value=1):
+        next_slot = self.rehash(hash_value, skip_value)
+        if next_slot <= self.current_size - 1:
+            if not self.find_key(next_slot, key):
+                skip_value += 2
+                self.rehash_until_key_found(next_slot, key, skip_value)
+            else:
+                return next_slot
+
     def rehash(self, old_hash, skip_value=1):
         # quadratic probing: uses a skip consisting of successive perfect squares
         new_hash = (old_hash + skip_value) % self.current_size
@@ -113,7 +122,8 @@ class PhoneBook:
         if not self.find_key(hash_value, fullname):
             key_hash = self.rehash_until_no_collision_found(hash_value, fullname)
             if key_hash != False:
-                self.phone_book_buckets[key_hash] == None
+                self.phone_book_buckets[key_hash] = None
+                self.phone_book_data[key_hash] = None
                 self.number_of_contacts -= 1
             else:
                 print("trying to delete {} {}. data not found".format(name, surname))
@@ -128,44 +138,29 @@ class PhoneBook:
         if self.phone_book_buckets[hash_value] == fullname:
             return True
         return False
-####
+
     def find_contact(self, name, surname=""):
         fullname = self.create_fullname(name, surname)
         hash_value = self.hash_function(fullname)
         if not self.find_key(hash_value, fullname):
             hash_value = self.rehash_until_no_collision_found(hash_value, fullname)
         if self.phone_book_buckets[hash_value] == fullname:
-            return True
+            return hash_value
         return False
 
-    def edit_name(self, name, new_name, surname=""):
-        if self.contact_already_exists(new_name, surname):
-            return "Contact already exists. Choose a different name"
-        for key, value in self.phonebook.items():
-            if "{} {}".format(value.first_name, value.surname) == "{} {}".format(name, surname):
-                value.first_name = new_name
-                return True
-        return False  # data not found
+    def copy_contact_details_to_new_bucket(self, old_name, new_name, surname=""):
+        old_fullname = self.create_fullname(old_name, surname)
+        new_fullname = self.create_fullname(new_name, surname)
+        new_slot = self.find_contact(new_fullname)
+        old_slot = self.find_contact(old_fullname)
+        self.phone_book_data[new_slot] = self.phone_book_data[old_slot]
+        self.remove_contact(old_name, surname)
 
-    def edit_surname(self, name, new_surname, surname=""):
-        if self.contact_already_exists(name, new_surname):
-            return "Contact already exists. Choose a different name"
-        for key, value in self.phonebook.items():
-            if "{} {}".format(value.first_name, value.surname) == "{} {}".format(name, surname):
-                value.surname = new_surname
-                return True
-        return False  # data not found
+    def edit_name_or_surname(self, old_name, new_name, surname=""):
+        if self.add_contact(new_name, surname):
+            self.copy_contact_details_to_new_bucket(old_name, new_name, surname)
 
-    def find_contacts(self, name, surname=""):
-        search_name = "{} {}".format(name, surname)
-        for key, value in self.phonebook.items():
-            if "{} {}".format(value.first_name, value.surname) == search_name:
-                return value
-        return False
-
-    def print_all_contact_details(self):
-        return_string = ""
-        for key, value in self.phonebook.items():
-            return_string += "".join(value.get_all_contact_details())
-        return return_string
+    def print_all_contact_details(self, name, surname=""):
+        value_position = self.find_contact(name, surname)
+        return self.phone_book_data[value_position]
 

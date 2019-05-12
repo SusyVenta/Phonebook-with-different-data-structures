@@ -1,6 +1,6 @@
-from .phone import Phone
-from .address import Address
-from .email_address import Email
+from ..Common_elements.phone import Phone
+from ..Common_elements.address import Address
+from ..Common_elements.email_address import Email
 
 
 class Contact:
